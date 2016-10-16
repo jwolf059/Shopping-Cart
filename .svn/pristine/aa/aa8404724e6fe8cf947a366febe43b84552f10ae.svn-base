@@ -1,0 +1,152 @@
+// Finish and comment me!
+
+package model;
+
+import java.math.BigDecimal;
+/**
+ * 
+ * @author Wolffamily2009
+ * @version 
+ */
+public final class Item {
+    
+    /** */
+    private static final BigDecimal COMPAREVALUE = new BigDecimal("0.00");
+    /** */
+    private String myName;
+    /** */
+    private BigDecimal myPrice;
+    /** */
+    private int myBulkQuantity;
+    /** */
+    private BigDecimal myBulkPrice;
+    /** */
+    private boolean myBulkStatus;
+    
+    /**
+     * 
+     * @param theName String input for item name.
+     * @param thePrice BigDecimal input for the item price.
+     */
+    public Item(final String theName, final BigDecimal thePrice) {
+        if (theName instanceof String) {
+            myName = theName; 
+        }
+        
+        else {
+            throw new IllegalArgumentException();
+        }
+        
+        if (thePrice.compareTo(COMPAREVALUE) <= 0) {
+            throw new IllegalArgumentException(); 
+        }
+        else {
+            myPrice = thePrice;
+        }
+
+    }
+
+    /**
+     * 
+     * @param theName String input for item name.
+     * @param thePrice BigDecimal input for the item price.
+     * @param theBulkQuantity integer number for BulkQuantity.
+     * @param theBulkPrice BigDecimal input for price of Bulk Order.
+     */
+    public Item(final String theName, final BigDecimal thePrice, final int theBulkQuantity,
+                final BigDecimal theBulkPrice) {
+        myName = theName; 
+//        if (theName instanceof String) {
+//            myName = theName; 
+//        }
+//        else {
+//            throw new IllegalArgumentException();
+//        }
+        if (thePrice.compareTo(COMPAREVALUE) <= 0) {
+            throw new IllegalArgumentException(); 
+        }
+        else {
+            myPrice = thePrice;
+        }
+        if (theBulkQuantity <= 0) {
+            throw new IllegalArgumentException(); 
+        }
+        else {
+            myBulkQuantity = theBulkQuantity;
+        }
+        if (theBulkPrice.compareTo(COMPAREVALUE) <= 0) {
+            throw new IllegalArgumentException(); 
+        }
+        else {
+            myBulkPrice = theBulkPrice;
+        }
+        myBulkStatus = isBulk();
+    }
+
+    /**
+     * 
+     * @param theQuantity an Integer value for number of Items ordered
+     * @return BigDecimal value for total price for items.
+     */
+    public BigDecimal calculateItemTotal(final int theQuantity) {
+        BigDecimal itemTotal;
+        final BigDecimal quantity = new BigDecimal(theQuantity);
+        final BigDecimal bulkQuantity = new BigDecimal(myBulkQuantity);
+
+        if (myBulkStatus && theQuantity >= myBulkQuantity) {
+            itemTotal = myBulkPrice.multiply(quantity.divide(bulkQuantity));
+            itemTotal = itemTotal.add(myPrice.multiply(quantity.remainder(bulkQuantity)));
+        }
+        else {
+            itemTotal = myPrice.multiply(quantity);
+        }
+        
+        return itemTotal;
+    }
+    /**
+     * 
+     * @return boolean value for if Item has bulk discount.
+     */
+    public boolean isBulk() {
+        boolean bulk = false;
+        final BigDecimal bulkQuantity = new BigDecimal(myBulkQuantity);
+        if (bulkQuantity.compareTo(COMPAREVALUE) > 0) {
+            bulk = true;
+        }
+        
+        return bulk;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder itemInfoSB = new StringBuilder();
+        itemInfoSB.append(myName);
+        itemInfoSB.append(", ");
+        itemInfoSB.append(myPrice);
+        if (myBulkStatus) {
+            itemInfoSB.append(" (");
+            itemInfoSB.append(myBulkQuantity);
+            itemInfoSB.append(" for ");
+            itemInfoSB.append(myBulkPrice);
+            itemInfoSB.append(")");
+        }
+        final String itemInfo = itemInfoSB.toString();
+        
+        return itemInfo;
+    }
+
+
+    @Override
+    public boolean equals(final Object theOther) {
+        
+        return false;
+    }
+
+
+    @Override
+    public int hashCode() {
+        
+        return 0;
+    }
+
+}
